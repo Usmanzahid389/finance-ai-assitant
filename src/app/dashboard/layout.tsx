@@ -16,7 +16,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq("key", "currency")
     .single()
 
-  const initialCurrency = ctxRow?.value ?? "USD"
+  // Fallback chain: user_context → signup metadata → USD
+  const initialCurrency =
+    ctxRow?.value ??
+    (user.user_metadata?.currency as string | undefined) ??
+    "USD"
 
   return (
     <CurrencyProvider initialCurrency={initialCurrency}>
