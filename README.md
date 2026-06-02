@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FinanceAI
 
-## Getting Started
+A personal finance assistant. Sign in, import your bank transactions, and just ask questions about your money in plain English.
 
-First, run the development server:
+## What it does
 
+- Chat with an AI about your spending, budgets, and subscriptions
+- Upload a receipt photo — it reads and logs it automatically
+- Import transactions from any bank CSV export
+- Set monthly budgets and track them in real time
+- Auto-detects recurring charges you might have forgotten about
+- Looks up unknown merchants online
+- Remembers your preferences ("I get paid on the 1st", "don't count rent in food")
+- Dark and light mode, with your currency of choice
+
+## Tech stack
+
+- **Next.js 14** — fullstack, App Router
+- **Supabase** — auth, database, file storage
+- **Anthropic Claude** — the AI brain (tool use + vision)
+- **Tailwind CSS + Framer Motion** — UI and animations
+- **Vercel** — deployment
+
+## Getting started
+
+**1. Clone and install**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repo-url>
+cd finance-assitance
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**2. Set up Supabase**
+- Create a project at supabase.com
+- Run `supabase/schema.sql` in the SQL editor
+- Create a storage bucket called `receipts` (set to public)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**3. Add environment variables**
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Fill in `.env.local`:
+```
+NEXT_PUBLIC_SUPABASE_URL=        # Supabase → Settings → API
+NEXT_PUBLIC_SUPABASE_ANON_KEY=   # Supabase → Settings → API
+ANTHROPIC_API_KEY=               # console.anthropic.com
+BRAVE_SEARCH_API_KEY=            # optional, for merchant lookups
+```
 
-## Learn More
+**4. Run**
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Go to `http://localhost:3000`, create an account, and import a CSV to get started.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How the AI works
 
-## Deploy on Vercel
+Not every question needs the same treatment. A "how much did I spend on groceries?" is just a database query. A receipt photo needs vision. A question about an unknown charge needs a web search.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+So instead of sending everything to a heavy model and hoping for the best, each message gets routed to the right tool:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Spending questions → query the database, summarise the result
+- Receipt photo → vision model extracts merchant, amount, date
+- Unknown merchant → Brave Search lookup
+- Month comparisons → pre-aggregated monthly summaries (not raw rows)
+- User preferences → saved to DB, injected into future prompts
+
+Claude picks the tools it needs, runs them in parallel, and writes the response. It never gets handed thousands of raw transaction rows — just the relevant slice.
+
+## Database
+
+Row Level Security is on every table. Users can only ever see their own data, enforced at the database level.
+
+Monthly spending summaries are pre-computed on every import so historical comparisons are fast and cheap.

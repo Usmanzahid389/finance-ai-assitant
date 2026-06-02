@@ -1,9 +1,7 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Enable class-based dark mode for Tailwind v4 — next-themes adds .dark to <html> */
+@variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --color-background: var(--background);
@@ -12,15 +10,138 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Light mode (default — :root) ── */
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(203, 213, 225, 0.7);
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #059669;
+  --border: rgba(203, 213, 225, 0.8);
+  --input-bg: rgba(248, 250, 252, 0.9);
+  --sidebar-bg: rgba(255, 255, 255, 0.95);
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(203, 213, 225, 0.6);
+  --glass-hover-bg: rgba(255, 255, 255, 0.95);
+  --glass-hover-border: rgba(5, 150, 105, 0.4);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --scrollbar: #cbd5e1;
+  --page-glow-1: rgba(5, 150, 105, 0.06);
+  --page-glow-2: rgba(59, 130, 246, 0.04);
+}
+
+/* ── Dark mode — next-themes adds .dark to <html> ── */
+.dark {
+  --background: #0a0f1e;
+  --foreground: #e2e8f0;
+  --card-bg: rgba(15, 23, 42, 0.7);
+  --card-border: rgba(51, 65, 85, 0.5);
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #10b981;
+  --border: rgba(51, 65, 85, 0.6);
+  --input-bg: rgba(30, 41, 59, 0.8);
+  --sidebar-bg: rgba(10, 15, 30, 0.9);
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(51, 65, 85, 0.5);
+  --glass-hover-bg: rgba(15, 23, 42, 0.85);
+  --glass-hover-border: rgba(16, 185, 129, 0.3);
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --scrollbar: #334155;
+  --page-glow-1: rgba(16, 185, 129, 0.08);
+  --page-glow-2: rgba(59, 130, 246, 0.05);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  transition: background 0.2s ease, color 0.2s ease;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--page-glow-1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, var(--page-glow-2) 0%, transparent 50%);
 }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 99px; }
+
+/* Glass card */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-hover {
+  transition: all 0.2s ease;
+}
+.glass-hover:hover {
+  background: var(--glass-hover-bg);
+  border-color: var(--glass-hover-border);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.08);
+}
+
+/* Light mode glass-hover shadow tweak */
+:root .glass-hover:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Glow effects */
+.glow-emerald { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+
+/* Animated gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #10b981, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Streaming cursor */
+.streaming-cursor::after {
+  content: '▋';
+  animation: blink 1s step-end infinite;
+  color: #10b981;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Prose */
+.prose-finance { line-height: 1.7; color: var(--text-primary); }
+.prose-finance strong { color: var(--text-primary); }
+.prose-finance code {
+  background: var(--muted);
+  padding: 0.15em 0.4em;
+  border-radius: 0.3em;
+  font-size: 0.875em;
+  color: #059669;
+}
+.dark .prose-finance code { color: #10b981; }
+
+/* Input focus glow */
+.input-glow:focus-within {
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4), 0 0 20px rgba(16, 185, 129, 0.1);
+}
+:root .input-glow:focus-within {
+  box-shadow: 0 0 0 1px rgba(5, 150, 105, 0.4), 0 4px 12px rgba(5, 150, 105, 0.08);
+}
+
+/* Colour utilities that respond to theme */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted-color { color: var(--text-muted); }
