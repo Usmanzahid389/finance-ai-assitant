@@ -56,7 +56,7 @@ export default function SignupPage() {
       email, password,
       options: {
         data: { full_name: name, currency },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin}/auth/callback`,
       },
     })
     if (error) { setError(error.message); setLoading(false); setStep("details"); return }
