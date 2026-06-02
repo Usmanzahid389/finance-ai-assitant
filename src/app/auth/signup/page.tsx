@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { createClient } from "@/lib/supabase/client"
 import {
   TrendingUp, Mail, Lock, User, ArrowRight, ArrowLeft,
-  Loader2, CheckCircle2, Globe
+  Loader2, Globe
 } from "lucide-react"
 
 const POPULAR_CURRENCIES = [
@@ -38,7 +38,6 @@ export default function SignupPage() {
   const [password, setPassword] = useState("")
   const [currency, setCurrency] = useState("USD")
   const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
 
   function focusBorder(e: React.FocusEvent<HTMLInputElement>) {
@@ -56,41 +55,17 @@ export default function SignupPage() {
       email, password,
       options: {
         data: { full_name: name, currency },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin}/auth/callback`,
       },
     })
     if (error) { setError(error.message); setLoading(false); setStep("details"); return }
     if (data.user) {
-      await supabase.from("user_context").insert({ user_id: data.user.id, key: "currency", value: currency })
+      await supabase.from("user_context").upsert(
+        { user_id: data.user.id, key: "currency", value: currency, updated_at: new Date().toISOString() },
+        { onConflict: "user_id,key" }
+      )
     }
-    setSuccess(true)
-    setLoading(false)
-  }
-
-  if (success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "#0a0f1e" }}>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center max-w-sm"
-        >
-          <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center mx-auto mb-5">
-            <CheckCircle2 className="w-8 h-8 text-emerald-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Check your email</h2>
-          <p className="text-slate-400 mb-8">
-            We sent a confirmation link to <span className="text-slate-200">{email}</span>
-          </p>
-          <Link
-            href="/auth/login"
-            className="inline-flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to sign in
-          </Link>
-        </motion.div>
-      </div>
-    )
+    router.push("/dashboard")
+    router.refresh()
   }
 
   return (
