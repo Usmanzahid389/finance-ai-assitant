@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { createClient } from "@/lib/supabase/client"
 import { useFormatCurrency } from "@/hooks/use-format-currency"
+import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { toast } from "sonner"
 
 interface Budget {
@@ -33,6 +34,7 @@ export default function BudgetsPage() {
   const [limit, setLimit] = useState("")
   const [period, setPeriod] = useState("monthly")
   const [saving, setSaving] = useState(false)
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null)
 
   const supabase = createClient()
   const formatCurrency = useFormatCurrency()
@@ -47,8 +49,9 @@ export default function BudgetsPage() {
     const now = new Date()
     const year = now.getFullYear()
     const month = now.getMonth() + 1
-    const startOfMonth = `${year}-${String(month).padStart(2, "0")}-01`
-    const endOfMonth = `${year}-${String(month).padStart(2, "0")}-31`
+    const pad = (n: number) => String(n).padStart(2, "0")
+    const startOfMonth = `${year}-${pad(month)}-01`
+    const endOfMonth = new Date(year, month, 0).toISOString().slice(0, 10)
 
     const [{ data: bs }, { data: spending }] = await Promise.all([
       supabase.from("budgets").select("*").eq("user_id", user.id),
@@ -98,6 +101,7 @@ export default function BudgetsPage() {
     await supabase.from("budgets").delete().eq("id", id)
     toast.success("Budget removed")
     setBudgets(prev => prev.filter(b => b.id !== id))
+    setPendingDelete(null)
   }
 
   const currentPeriod = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })
@@ -114,7 +118,7 @@ export default function BudgetsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-1">Budgets</h1>
-            <p className="text-sm text-slate-500">{currentPeriod}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">{currentPeriod}</p>
           </div>
           <Button onClick={() => setShowForm(!showForm)} size="sm">
             <Plus className="w-3.5 h-3.5" />Add budget
@@ -129,7 +133,7 @@ export default function BudgetsPage() {
                 <CardContent>
                   <form onSubmit={saveBudget} className="space-y-3">
                     <div>
-                      <label className="text-xs text-slate-500 mb-1.5 block">Category</label>
+                      <label className="text-xs text-slate-600 dark:text-slate-400 mb-1.5 block">Category</label>
                       <select
                         value={category}
                         onChange={e => setCategory(e.target.value)}
@@ -140,7 +144,7 @@ export default function BudgetsPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs text-slate-500 mb-1.5 block">Monthly limit</label>
+                      <label className="text-xs text-slate-600 dark:text-slate-400 mb-1.5 block">Monthly limit</label>
                       <Input type="number" placeholder="500" value={limit} onChange={e => setLimit(e.target.value)} min="1" step="1" />
                     </div>
                     <div className="flex gap-2">
@@ -158,9 +162,9 @@ export default function BudgetsPage() {
 
         {budgets.length === 0 && !showForm && (
           <div className="glass rounded-2xl p-10 text-center border border-dashed border-slate-200 dark:border-slate-700">
-            <Target className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+            <Target className="w-10 h-10 text-slate-500 dark:text-slate-400 mx-auto mb-3" />
             <h2 className="text-slate-600 dark:text-slate-300 font-medium mb-1">No budgets yet</h2>
-            <p className="text-sm text-slate-400 mb-4">Set monthly limits to track your spending</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Set monthly limits to track your spending</p>
             <Button onClick={() => setShowForm(true)}>Create budget</Button>
           </div>
         )}
@@ -179,7 +183,7 @@ export default function BudgetsPage() {
                       }>
                         {b.percent ?? 0}% used
                       </Badge>
-                      <button onClick={() => deleteBudget(b.id)} className="text-slate-400 hover:text-red-500 transition-colors">
+                      <button onClick={() => setPendingDelete(b.id)} className="text-slate-400 hover:text-red-500 transition-colors">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -195,7 +199,7 @@ export default function BudgetsPage() {
                       transition={{ duration: 0.6, ease: "easeOut" }}
                     />
                   </div>
-                  <div className="flex justify-between text-xs text-slate-400">
+                  <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
                     <span>{formatCurrency(b.spent ?? 0)} spent</span>
                     <span>{formatCurrency(Math.max(0, Number(b.limit_amount) - (b.spent ?? 0)))} remaining of {formatCurrency(Number(b.limit_amount))}</span>
                   </div>
@@ -205,6 +209,14 @@ export default function BudgetsPage() {
           ))}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        onClose={() => setPendingDelete(null)}
+        onConfirm={() => pendingDelete && deleteBudget(pendingDelete)}
+        title="Remove budget?"
+        message="This budget limit will be permanently removed."
+      />
     </div>
   )
 }

@@ -7,7 +7,7 @@ import { useTheme } from "next-themes"
 import { createClient } from "@/lib/supabase/client"
 import {
   TrendingUp, MessageSquare, LayoutDashboard, Upload,
-  Settings, LogOut, Wallet, Target, RefreshCw, Sun, Moon
+  Settings, LogOut, Wallet, Target, RefreshCw, Sun, Moon, Tag
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
@@ -17,11 +17,12 @@ const nav = [
   { href: "/dashboard/chat", icon: MessageSquare, label: "Assistant" },
   { href: "/dashboard/transactions", icon: Wallet, label: "Transactions" },
   { href: "/dashboard/budgets", icon: Target, label: "Budgets" },
-  { href: "/dashboard/import", icon: Upload, label: "Import" },
   { href: "/dashboard/subscriptions", icon: RefreshCw, label: "Subscriptions" },
+  { href: "/dashboard/categories", icon: Tag, label: "Categories" },
+  { href: "/dashboard/import", icon: Upload, label: "Import" },
 ]
 
-export function Sidebar() {
+export function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname()
   const router = useRouter()
   const { theme, setTheme } = useTheme()
@@ -52,7 +53,7 @@ export function Sidebar() {
         {nav.map(({ href, icon: Icon, label }) => {
           const active = pathname === href
           return (
-            <Link key={href} href={href}>
+            <Link key={href} href={href} onClick={onClose}>
               <motion.div
                 whileTap={{ scale: 0.97 }}
                 className={cn(

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
-import { Sidebar } from "@/components/layout/sidebar"
 import { CurrencyProvider } from "@/components/providers/currency-provider"
+import { DashboardShell } from "@/components/layout/dashboard-shell"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -16,7 +16,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq("key", "currency")
     .single()
 
-  // Fallback chain: user_context → signup metadata → USD
   const initialCurrency =
     ctxRow?.value ??
     (user.user_metadata?.currency as string | undefined) ??
@@ -24,12 +23,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <CurrencyProvider initialCurrency={initialCurrency}>
-      <div className="h-screen flex overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 overflow-hidden flex flex-col min-w-0">
-          {children}
-        </main>
-      </div>
+      <DashboardShell>
+        {children}
+      </DashboardShell>
     </CurrencyProvider>
   )
 }

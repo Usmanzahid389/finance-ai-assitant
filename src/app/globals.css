@@ -17,7 +17,7 @@
   --card-bg: rgba(255, 255, 255, 0.85);
   --card-border: rgba(203, 213, 225, 0.7);
   --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --muted-foreground: #475569;
   --accent: #059669;
   --border: rgba(203, 213, 225, 0.8);
   --input-bg: rgba(248, 250, 252, 0.9);
@@ -27,8 +27,8 @@
   --glass-hover-bg: rgba(255, 255, 255, 0.95);
   --glass-hover-border: rgba(5, 150, 105, 0.4);
   --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
   --scrollbar: #cbd5e1;
   --page-glow-1: rgba(5, 150, 105, 0.06);
   --page-glow-2: rgba(59, 130, 246, 0.04);

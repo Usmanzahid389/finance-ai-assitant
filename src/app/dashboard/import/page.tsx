@@ -102,8 +102,8 @@ export default function ImportPage() {
     <div className="flex-1 overflow-y-auto p-6">
       <div className="max-w-lg mx-auto space-y-6">
         <div>
-          <h1 className="text-xl font-semibold text-slate-100 mb-1">Import transactions</h1>
-          <p className="text-sm text-slate-500">Upload a CSV export from your bank or financial app</p>
+          <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-1">Import transactions</h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Upload a CSV export from your bank or financial app</p>
         </div>
 
         {/* Drop zone */}
@@ -114,7 +114,7 @@ export default function ImportPage() {
           onClick={() => fileRef.current?.click()}
           className={`
             relative rounded-2xl border-2 border-dashed p-12 text-center cursor-pointer transition-all duration-200
-            ${dragging ? "border-emerald-500/60 bg-emerald-500/5" : "border-slate-700 hover:border-slate-600 hover:bg-slate-800/30"}
+            ${dragging ? "border-emerald-500/60 bg-emerald-500/5" : "border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/30"}
           `}
         >
           <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleFileInput} />
@@ -122,18 +122,18 @@ export default function ImportPage() {
           {loading ? (
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="w-10 h-10 text-emerald-400 animate-spin" />
-              <p className="text-sm text-slate-400">Processing your transactions…</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Processing your transactions…</p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${dragging ? "bg-emerald-500/20" : "bg-slate-800"}`}>
-                <Upload className={`w-6 h-6 ${dragging ? "text-emerald-400" : "text-slate-500"}`} />
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${dragging ? "bg-emerald-500/20" : "bg-slate-100 dark:bg-slate-800"}`}>
+                <Upload className={`w-6 h-6 ${dragging ? "text-emerald-400" : "text-slate-400 dark:text-slate-500"}`} />
               </div>
               <div>
-                <p className="text-sm text-slate-300 font-medium">
+                <p className="text-sm text-slate-700 dark:text-slate-300 font-medium">
                   {dragging ? "Drop to upload" : "Drag & drop your CSV here"}
                 </p>
-                <p className="text-xs text-slate-600 mt-1">or click to browse</p>
+                <p className="text-xs text-slate-500 dark:text-slate-600 mt-1">or click to browse</p>
               </div>
             </div>
           )}
@@ -158,7 +158,7 @@ export default function ImportPage() {
                       { label: "Recurring found", value: result.recurring_detected, variant: "violet" as const },
                     ].map(s => (
                       <div key={s.label} className="glass rounded-lg p-3">
-                        <p className="text-xs text-slate-500 mb-1">{s.label}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-500 mb-1">{s.label}</p>
                         <p className="text-xl font-bold text-slate-100">{s.value}</p>
                       </div>
                     ))}
@@ -196,14 +196,14 @@ export default function ImportPage() {
               <FileText className="w-3.5 h-3.5" />CSV format
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-slate-400">
+          <CardContent className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
             <p>Supports exports from most banks. The file must have columns for:</p>
             <div className="flex flex-wrap gap-2">
               {["Date", "Description / Memo", "Amount"].map(f => (
                 <Badge key={f} variant="secondary">{f}</Badge>
               ))}
             </div>
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-slate-500 dark:text-slate-600">
               Duplicates are automatically detected and skipped. Messy data (missing fields, extra columns) is handled gracefully.
             </p>
             <button onClick={downloadSample} className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 transition-colors">

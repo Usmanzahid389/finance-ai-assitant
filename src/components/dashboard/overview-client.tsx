@@ -53,7 +53,7 @@ export function OverviewClient({ currentSummary, lastSummary, budgets, recurring
             <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">
               Good {getGreeting()}, {userName}
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
               {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </p>
           </div>
@@ -114,7 +114,7 @@ export function OverviewClient({ currentSummary, lastSummary, budgets, recurring
               </CardHeader>
               <CardContent>
                 <CardValue className="text-emerald-600 dark:text-emerald-400">{formatCurrency(income)}</CardValue>
-                <p className="text-xs text-slate-400 mt-1">{currentSummary?.transaction_count ?? 0} transactions</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{currentSummary?.transaction_count ?? 0} transactions</p>
               </CardContent>
             </Card>
 
@@ -129,7 +129,7 @@ export function OverviewClient({ currentSummary, lastSummary, budgets, recurring
                 <CardValue className={net >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}>
                   {net >= 0 ? "+" : ""}{formatCurrency(net)}
                 </CardValue>
-                <p className="text-xs text-slate-400 mt-1">{net >= 0 ? "Saving money" : "Overspending"}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{net >= 0 ? "Saving money" : "Overspending"}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -160,7 +160,7 @@ export function OverviewClient({ currentSummary, lastSummary, budgets, recurring
                   </div>
                 ))}
                 {categoryData.length === 0 && (
-                  <p className="text-sm text-slate-400">No spending data yet</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">No spending data yet</p>
                 )}
               </CardContent>
             </Card>
@@ -179,7 +179,7 @@ export function OverviewClient({ currentSummary, lastSummary, budgets, recurring
               </CardHeader>
               <CardContent className="space-y-3 mt-3">
                 {budgets.length === 0 && (
-                  <p className="text-sm text-slate-400">No budgets set. <Link href="/dashboard/budgets" className="text-emerald-600 dark:text-emerald-400">Create one</Link></p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">No budgets set. <Link href="/dashboard/budgets" className="text-emerald-600 dark:text-emerald-400">Create one</Link></p>
                 )}
                 {budgets.slice(0, 4).map(b => (
                   <div key={b.id}>
@@ -220,7 +220,7 @@ export function OverviewClient({ currentSummary, lastSummary, budgets, recurring
                   <div key={t.id} className="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/50 last:border-0">
                     <div className="min-w-0">
                       <p className="text-xs text-slate-700 dark:text-slate-300 truncate max-w-[160px]">{t.description}</p>
-                      <p className="text-xs text-slate-400">{formatShortDate(t.date)} · {t.category}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{formatShortDate(t.date)} · {t.category}</p>
                     </div>
                     <span className={`text-xs font-medium ml-2 ${t.is_income ? "text-emerald-600 dark:text-emerald-400" : "text-slate-600 dark:text-slate-200"}`}>
                       {t.is_income ? "+" : "-"}{formatCurrency(Number(t.amount))}
@@ -228,7 +228,7 @@ export function OverviewClient({ currentSummary, lastSummary, budgets, recurring
                   </div>
                 ))}
                 {recentTransactions.length === 0 && (
-                  <p className="text-sm text-slate-400">No transactions yet</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">No transactions yet</p>
                 )}
               </CardContent>
             </Card>
@@ -251,7 +251,7 @@ export function OverviewClient({ currentSummary, lastSummary, budgets, recurring
                     <div key={i} className="flex items-center gap-2 glass rounded-lg px-3 py-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-violet-500" />
                       <span className="text-xs text-slate-600 dark:text-slate-300">{r.merchant}</span>
-                      <span className="text-xs text-slate-400">{formatCurrency(Number(r.amount))}/{r.frequency === "monthly" ? "mo" : r.frequency === "yearly" ? "yr" : "wk"}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{formatCurrency(Number(r.amount))}/{r.frequency === "monthly" ? "mo" : r.frequency === "yearly" ? "yr" : "wk"}</span>
                     </div>
                   ))}
                 </CardContent>
